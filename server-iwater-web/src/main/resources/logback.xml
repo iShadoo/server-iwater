@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration debug="false">
+    <contextName>base</contextName>
+    <property name="g_log_encoder_pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${g_log_encoder_pattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="DEBUG-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${g_log_path_mac}/${g_log_file_debug}</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <OnMismatch>NEUTRAL</OnMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <OnMismatch>DENY</OnMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${g_log_path_mac}/${g_log_file_debug}.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>${g_log_max_history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${g_log_encoder_pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${g_log_path_mac}/${g_log_file_error}</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <OnMismatch>DENY</OnMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${g_log_path_mac}/${g_log_file_error}.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>${g_log_max_history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${g_log_encoder_pattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_DEBUG" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DEBUG-FILE" />
+    </appender>
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ERROR-FILE" />
+    </appender>
+    <logger name="${g_logger_name}" additivity="${log_console_flag}" level="${log_file_level}">
+        <appender-ref ref = "ASYNC_DEBUG"/>
+        <appender-ref ref = "ASYNC_ERROR"/>
+    </logger>
+    <root level="${log_console_level}">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

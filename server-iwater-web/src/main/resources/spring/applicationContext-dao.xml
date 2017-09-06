@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+
+    <!-- transaction manager, use JtaTransactionManager for global tx -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="baseDataSource" />
+    </bean>
+    <!-- define the SqlSessionFactory, notice that configLocation is not needed when you use MapperFactoryBean -->
+    <bean id="baseSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="baseDataSource" />
+        <!--<property name="configLocation" value="classpath:SqlMapConfig.xml" />-->
+        <property name="mapperLocations" value="classpath*:mapper/**/*.xml" />
+    </bean>
+
+    <!-- scan for mappers and let them be autowired -->
+    <bean id="baseMapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.iwater.dao" />
+        <property name="sqlSessionFactoryBeanName" value="baseSqlSessionFactory" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+</beans>
